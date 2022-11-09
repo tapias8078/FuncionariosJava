@@ -1,0 +1,5 @@
+com\iudigital\util\ConnectionUtil.class
+com\iudigital\controller\RolController.class
+com\iudigital\view\Main.class
+com\iudigital\dao\RolDao.class
+com\iudigital\dominio\Rol.class
