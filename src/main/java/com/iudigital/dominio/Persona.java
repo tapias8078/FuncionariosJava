@@ -1,7 +1,5 @@
 package com.iudigital.dominio;
 
-import java.sql.Date;
-
 public class Persona {
 
     private String idPersona;
@@ -74,6 +72,10 @@ public class Persona {
     }
     public void setIdDireccion(String idDireccion) {
         this.idDireccion = idDireccion;
+    }
+    @Override
+    public String toString() {
+        return numDocPer+" - "+nombresPer+" "+apellidosPer;
     }
 
     

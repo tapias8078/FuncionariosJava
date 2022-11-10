@@ -26,9 +26,9 @@ public class GrupoFamiliarDao {
             connection = ConnectionUtil.getConnection();
             preparedStatement = connection.prepareCall(CREATE_GRUPOFAMILIAR);
             
-            preparedStatement.setInt(1,grupoFamiliar.getIdRol());
-            preparedStatement.setInt(2,grupoFamiliar.getIdPer());
-            preparedStatement.setInt(3,grupoFamiliar.getIdFuncionario());
+            preparedStatement.setString(1,grupoFamiliar.getIdRol());
+            preparedStatement.setString(2,grupoFamiliar.getIdPer());
+            preparedStatement.setString(3,grupoFamiliar.getIdFuncionario());
             
            
             preparedStatement.executeUpdate();
@@ -57,10 +57,10 @@ public class GrupoFamiliarDao {
             while(resultSet.next()){
                 GrupoFamiliar grupoFamiliar = new GrupoFamiliar();
 
-                grupoFamiliar.setIdGrupo(resultSet.getInt("id"));
-                grupoFamiliar.setIdRol(resultSet.getInt("rol"));
-                grupoFamiliar.setIdPer(resultSet.getInt("persona_doc"));
-                grupoFamiliar.setIdFuncionario(resultSet.getInt("funcionario_id"));           
+                grupoFamiliar.setIdGrupo(resultSet.getString("id"));
+                grupoFamiliar.setIdRol(resultSet.getString("rol"));
+                grupoFamiliar.setIdPer(resultSet.getString("persona_doc"));
+                grupoFamiliar.setIdFuncionario(resultSet.getString("funcionario_id"));           
                
                
                
@@ -96,10 +96,10 @@ public class GrupoFamiliarDao {
             if (resultSet.next()) {
                grupoFamiliar = new GrupoFamiliar();
 
-               grupoFamiliar.setIdGrupo(resultSet.getInt("id_grupo"));
-                grupoFamiliar.setIdRol(resultSet.getInt("Rol_idRol"));
-                grupoFamiliar.setIdPer(resultSet.getInt("Personas_id_pers"));
-                grupoFamiliar.setIdFuncionario(resultSet.getInt("Funcionarios_id_func"));                  
+               grupoFamiliar.setIdGrupo(resultSet.getString("id_grupo"));
+                grupoFamiliar.setIdRol(resultSet.getString("Rol_idRol"));
+                grupoFamiliar.setIdPer(resultSet.getString("Personas_id_pers"));
+                grupoFamiliar.setIdFuncionario(resultSet.getString("Funcionarios_id_func"));                  
             }
             return grupoFamiliar;
         } finally {
@@ -123,9 +123,9 @@ public class GrupoFamiliarDao {
         try {
             connection = ConnectionUtil.getConnection();
             preparedStatement = connection.prepareCall(UPDATE_GRUPOFAMILIAR);
-            preparedStatement.setInt(0,grupoFamiliar.getIdRol());
-            preparedStatement.setInt(1,grupoFamiliar.getIdPer());
-            preparedStatement.setInt(2,grupoFamiliar.getIdFuncionario());
+            preparedStatement.setString(0,grupoFamiliar.getIdRol());
+            preparedStatement.setString(1,grupoFamiliar.getIdPer());
+            preparedStatement.setString(2,grupoFamiliar.getIdFuncionario());
                      
             preparedStatement.setInt(4, idGrupo);
             preparedStatement.executeUpdate();

@@ -2,42 +2,72 @@ package com.iudigital.dominio;
 
 public class Funcionarios {
     
-    private int idFunc;
-    private int idnivelEst;
-    private int idInstEst;
-    private int idTituloAcad;    
-    private int idPersona;
+    private String idFunc;
+    private String idnivelEst;
+    private String idInstEst;
+    private String idTituloAcad;    
+    private String idPersona;
+    private String cedulaPersona;
+    private String nombresPersona;
+    private String apellidosPersona;
+
     
-    public int getIdFunc() {
+
+    public String getNombresPersona() {
+        return nombresPersona;
+    }
+    public void setNombresPersona(String nombresPersona) {
+        this.nombresPersona = nombresPersona;
+    }
+    public String getApellidosPersona() {
+        return apellidosPersona;
+    }
+    public void setApellidosPersona(String apellidosPersona) {
+        this.apellidosPersona = apellidosPersona;
+    }
+    public String getIdFunc() {
         return idFunc;
     }
-    public void setIdFunc(int idFunc) {
+    public void setIdFunc(String idFunc) {
         this.idFunc = idFunc;
     }
-    public int getIdnivelEst() {
+    public String getIdnivelEst() {
         return idnivelEst;
     }
-    public void setIdnivelEst(int idnivelEst) {
+    public void setIdnivelEst(String idnivelEst) {
         this.idnivelEst = idnivelEst;
     }
-    public int getIdInstEst() {
+    public String getIdInstEst() {
         return idInstEst;
     }
-    public void setIdInstEst(int idInstEst) {
+    public void setIdInstEst(String idInstEst) {
         this.idInstEst = idInstEst;
     }
-    public int getIdTituloAcad() {
+    public String getIdTituloAcad() {
         return idTituloAcad;
     }
-    public void setIdTituloAcad(int idTituloAcad) {
+    public void setIdTituloAcad(String idTituloAcad) {
         this.idTituloAcad = idTituloAcad;
     }
-    public int getIdPersona() {
+    public String getIdPersona() {
         return idPersona;
     }
-    public void setIdPersona(int idPersona) {
+    public void setIdPersona(String idPersona) {
         this.idPersona = idPersona;
     }
+    public String getCedulaPersona() {
+        return cedulaPersona;
+    }
+    public void setCedulaPersona(String cedulaPersona) {
+        this.cedulaPersona = cedulaPersona;
+    }
+    @Override
+    public String toString() {
+        return cedulaPersona + " " + nombresPersona
+                + " " + apellidosPersona;
+    }
+
+    
 
     
 

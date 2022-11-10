@@ -60,7 +60,7 @@ public class Main1 extends javax.swing.JFrame {
     private final String[] COLUMNSTIPO= {"ID","TIPO DE DOCUMENTO"};
     private final String[] COLUMNSTITULO= {"ID","TITULO ACADEMICO"};
     private final String[] COLUMNSPERSONA= {"ID","DOCUMENTO","TIPO DOCUMENTO","NOMBRES","APELLIDOS","FECHA NACIMIENTO","SEXO","ESTADO CIVIL","TELEFONO","DIRECCION"};
-    private final String[] COLUMNSFUNCIONARIO= {"ID","DOCUMENTO","TIPO DOCUMENTO","NOMBRES","APELLIDOS","FECHA NACIMIENTO","SEXO","ESTADO CIVIL","TELEFONO","DIRECCION"};
+    private final String[] COLUMNSFUNCIONARIO= {"ID","NIVEL ESTUDIOS","INSTITUCION DE ESTUDIOS","TITULO","ID PERSONA","CEDULA","NOMBRES","APELLIDOS"};
     private final String SELECCIONE = "-- SELECCIONE --";
     
     public Main1() {
@@ -75,6 +75,13 @@ public class Main1 extends javax.swing.JFrame {
         txtIdTelefono.setEditable(false);
         txtIdTipo.setEditable(false);
         txtIdTitulo.setEditable(false);
+        txtIdNivelEst.setEditable(false);
+        txtIdInst.setEditable(false);
+        txtIdTituloAcad.setEditable(false);
+        txtIdPers.setEditable(false);
+        txtIdPersona.setEditable(false);
+        txtIdFunc.setEditable(false);
+        
         
                
         
@@ -103,11 +110,73 @@ public class Main1 extends javax.swing.JFrame {
         listTelefonos();
         listTipoDoc();
         listPersonas();
+        listFuncionarios();
         addListener();  
         
     }
+
+
+
+
+     private void listFuncionarios() {
+       
+        cbxFuncionarios.removeAllItems();      
+        tblFuncionario.removeAll();
+        Funcionarios func1 = new Funcionarios();
+        func1.setApellidosPersona("");
+        func1.setNombresPersona("");
+        func1.setCedulaPersona(SELECCIONE);
+
+        cbxFuncionarios.addItem(func1);
+
+
+        
+        DefaultTableModel defaultTableModel = new DefaultTableModel();
+        for (String COLUMN : COLUMNSFUNCIONARIO) {
+            defaultTableModel.addColumn(COLUMN);
+        }
+
+        tblFuncionario.setModel(defaultTableModel);
+        try {
+            List<Funcionarios> funcionarios = funcionarioController.obtnerFuncionarios();
+            if (funcionarios.isEmpty()) {
+                return;
+            }
+            defaultTableModel.setRowCount(funcionarios.size());
+            int row = 0;
+            for (Funcionarios funcionario : funcionarios) {
+                
+                defaultTableModel.setValueAt(funcionario.getIdFunc(), row, 0);
+                defaultTableModel.setValueAt(funcionario.getIdnivelEst(), row, 1);
+                defaultTableModel.setValueAt(funcionario.getIdInstEst(), row, 2);
+                defaultTableModel.setValueAt(funcionario.getIdTituloAcad(), row, 3);
+                defaultTableModel.setValueAt(funcionario.getIdPersona(), row, 4);
+                defaultTableModel.setValueAt(funcionario.getCedulaPersona(), row, 5);
+                defaultTableModel.setValueAt(funcionario.getNombresPersona(), row, 6);
+                defaultTableModel.setValueAt(funcionario.getApellidosPersona(), row, 7);
+                
+                
+                
+                row++;
+
+                cbxFuncionarios.addItem(funcionario);
+                
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
      private void listPersonas() {
        
+        cbxPersonas.removeAllItems();
+        cbxPersonas1.removeAllItems();
+        Persona per1 = new Persona();
+        per1.setNombresPer("");        
+        per1.setApellidosPer("");        
+        per1.setNumDocPer(SELECCIONE);        
+        cbxPersonas.addItem(per1);
+        cbxPersonas1.addItem(per1);        
+        
                
         tblPersona.removeAll();
         
@@ -139,6 +208,9 @@ public class Main1 extends javax.swing.JFrame {
                 defaultTableModel.setValueAt(persona.getIdDireccion(), row, 9);
                 
                 row++;
+
+                cbxPersonas.addItem(persona);
+                cbxPersonas1.addItem(persona);
                 
             }
         } catch (SQLException ex) {
@@ -462,6 +534,30 @@ public class Main1 extends javax.swing.JFrame {
             ex.printStackTrace();
         }
     }
+
+    // listar por id funciones
+    public void obtenerFuncionario(FuncionarioController funcionarioController, int id) {
+
+        try {
+           Funcionarios funcionario = funcionarioController.obtenerFuncionario(id);
+           //String nivelEstudio = funcionario.getIdFunc().toString();
+           
+           txtIdNivelEst.setText(String.valueOf(funcionario.getIdnivelEst()));
+           txtIdInst.setText(String.valueOf(funcionario.getIdInstEst()));
+           txtIdTituloAcad.setText(String.valueOf(funcionario.getIdTituloAcad()));
+           txtIdPers.setText(String.valueOf(funcionario.getIdPersona()));
+           txtIdFunc.setText(String.valueOf(funcionario.getIdFunc()));
+          
+
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    
+    
+
      
      
      
@@ -469,12 +565,12 @@ public class Main1 extends javax.swing.JFrame {
         cbxRoles.addItemListener(event -> {
             Rol selectedRol = (Rol) event.getItem();
             if (selectedRol.getNombreRol().equals(SELECCIONE)) {
-                txtNombreRol.setText("");
+                txtIdRoles.setText("");
                 
 
             } else {
-                txtIdRol.setText(String.valueOf(selectedRol.getIdRol()));
-                txtNombreRol.setText(selectedRol.getNombreRol());
+                txtIdRoles.setText(String.valueOf(selectedRol.getIdRol()));
+                
                 
             }
             System.out.println("selectedRol = " + selectedRol);
@@ -493,6 +589,88 @@ public class Main1 extends javax.swing.JFrame {
             }
             System.out.println("selectedSexo = " + selectedSexo);
         });
+        cbxPersonas1.addItemListener(event -> {
+            Persona selectedPer = (Persona) event.getItem();            
+            if (selectedPer.getNumDocPer().equals(SELECCIONE)) {
+                txtIdPers1.setText("");
+                
+
+            } else {
+                txtIdPers1.setText(String.valueOf(selectedPer.getIdPersona()));
+                
+                
+            }
+            System.out.println("selectedRol = " + selectedPer);
+        });
+        cbxFuncionarios.addItemListener(event -> {
+            Funcionarios selectedFunc = (Funcionarios) event.getItem();            
+            if (selectedFunc.getCedulaPersona().equals(SELECCIONE)) {
+                txtIdFuncionario.setText("");
+                
+
+            } else {
+                txtIdFuncionario.setText(String.valueOf(selectedFunc.getIdFunc()));
+                
+                
+            }
+            System.out.println("selectedRol = " + selectedFunc);
+        });
+
+        //TODO:
+
+        cbxNivelEst.addItemListener(event -> {
+            NivelEstudios selectedNivel = (NivelEstudios) event.getItem();            
+            if (selectedNivel.getNivelEst().equals(SELECCIONE)) {
+                txtIdNivelEst.setText("");
+                
+
+            } else {
+                txtIdNivelEst.setText(String.valueOf(selectedNivel.getIdNivelEst()));
+                
+                
+            }
+            System.out.println("selectedRol = " + selectedNivel);
+        });
+        cbxInstituciones.addItemListener(event -> {
+            InstitucionEstudios selectedInst = (InstitucionEstudios) event.getItem();            
+            if (selectedInst.getInstitucion().equals(SELECCIONE)) {
+                txtIdInst.setText("");
+                
+
+            } else {
+                txtIdInst.setText(String.valueOf(selectedInst.getIdInstitucion()));
+                
+                
+            }
+            System.out.println("selectedRol = " + selectedInst);
+        });
+        cbxTitulo.addItemListener(event -> {
+            TituloAcademico selectedTitulo = (TituloAcademico) event.getItem();            
+            if (selectedTitulo.getTitulo().equals(SELECCIONE)) {
+                txtIdTituloAcad.setText("");
+                
+
+            } else {
+                txtIdTituloAcad.setText(String.valueOf(selectedTitulo.getIdTitulo()));
+                
+                
+            }
+            System.out.println("selectedRol = " + selectedTitulo);
+        });
+        cbxPersonas.addItemListener(event -> {
+            Persona selectedPersona = (Persona) event.getItem();            
+            if (selectedPersona.getNumDocPer().equals(SELECCIONE)) {
+                txtIdPers.setText("");
+                
+
+            } else {
+                txtIdPers.setText(String.valueOf(selectedPersona.getIdPersona()));
+                
+                
+            }
+            System.out.println("selectedRol = " + selectedPersona);
+        });
+       
         
         
     }
@@ -532,6 +710,8 @@ public class Main1 extends javax.swing.JFrame {
         btnCrearPersona = new javax.swing.JButton();
         btnBorrarPersona = new javax.swing.JButton();
         btnActualizarPersona = new javax.swing.JButton();
+        lblNumeroDoc4 = new javax.swing.JLabel();
+        txtIdPersona = new javax.swing.JTextField();
         jPanel1 = new javax.swing.JPanel();
         cbxNivelEst = new javax.swing.JComboBox<>();
         lblNivelEst = new javax.swing.JLabel();
@@ -541,13 +721,34 @@ public class Main1 extends javax.swing.JFrame {
         cbxTitulo = new javax.swing.JComboBox<>();
         jScrollPane11 = new javax.swing.JScrollPane();
         tblFuncionario = new javax.swing.JTable();
-        txtPersona = new javax.swing.JTextField();
-        txtGrupoFamiliar = new javax.swing.JTextField();
+        txtIdFunc = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
+        cbxPersonas = new javax.swing.JComboBox<>();
+        btnCrearFuncionario = new javax.swing.JButton();
+        txtIdNivelEst = new javax.swing.JTextField();
+        txtIdInst = new javax.swing.JTextField();
+        txtIdTituloAcad = new javax.swing.JTextField();
+        txtIdPers = new javax.swing.JTextField();
+        btnActualizarFuncionario = new javax.swing.JButton();
+        btnBorrarFuncionario = new javax.swing.JButton();
         JPGrupoFamiliar = new javax.swing.JPanel();
         cbxRoles = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
+        jScrollPane12 = new javax.swing.JScrollPane();
+        tblGrupoFamiliar = new javax.swing.JTable();
+        jLabel5 = new javax.swing.JLabel();
+        cbxPersonas1 = new javax.swing.JComboBox<>();
+        txtIdPers1 = new javax.swing.JTextField();
+        btnAddPerGrup = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jLabel6 = new javax.swing.JLabel();
+        cbxFuncionarios = new javax.swing.JComboBox<>();
+        txtIdFuncionario = new javax.swing.JTextField();
+        txtIdRoles = new javax.swing.JTextField();
+        jLabel7 = new javax.swing.JLabel();
+        txtIdGrupo = new javax.swing.JTextField();
         JPSexos = new javax.swing.JPanel();
         txtIdSexo = new javax.swing.JTextField();
         lblIdSexo = new javax.swing.JLabel();
@@ -743,18 +944,28 @@ public class Main1 extends javax.swing.JFrame {
 
         btnActualizarPersona.setText("Actualizar");
 
+        lblNumeroDoc4.setText("ID PERSONA");
+
+        txtIdPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdPersonaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout JPPersonasLayout = new javax.swing.GroupLayout(JPPersonas);
         JPPersonas.setLayout(JPPersonasLayout);
         JPPersonasLayout.setHorizontalGroup(
             JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(JPPersonasLayout.createSequentialGroup()
                 .addGap(29, 29, 29)
+                .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(lblSexo)
+                    .addComponent(cbxSexos, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblNumeroDoc4)
+                    .addComponent(txtIdPersona, javax.swing.GroupLayout.PREFERRED_SIZE, 59, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(36, 36, 36)
                 .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(JPPersonasLayout.createSequentialGroup()
-                        .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(lblSexo)
-                            .addComponent(cbxSexos, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)
                         .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblEstadoCiv)
                             .addComponent(cbxEstadoCiv, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -772,13 +983,11 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(cbxTipoDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(JPPersonasLayout.createSequentialGroup()
                         .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 186, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(lblNumeroDoc1))
-                        .addGap(18, 18, 18)
-                        .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPPersonasLayout.createSequentialGroup()
-                                .addGap(1, 1, 1)
-                                .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, 239, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(lblNumeroDoc1)
+                            .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(40, 40, 40)
+                        .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(lblNumeroDoc2, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
@@ -797,7 +1006,7 @@ public class Main1 extends javax.swing.JFrame {
                     .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                         .addComponent(lblNumeroDoc, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(txtNumDoc, javax.swing.GroupLayout.PREFERRED_SIZE, 126, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(54, Short.MAX_VALUE))
             .addComponent(jScrollPane2)
         );
         JPPersonasLayout.setVerticalGroup(
@@ -835,20 +1044,25 @@ public class Main1 extends javax.swing.JFrame {
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(JPPersonasLayout.createSequentialGroup()
                             .addComponent(lblNumeroDoc1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGroup(JPPersonasLayout.createSequentialGroup()
-                            .addComponent(lblNumeroDoc2)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGap(27, 27, 27))
+                        .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(txtApellidos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtNombres, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(javax.swing.GroupLayout.Alignment.LEADING, JPPersonasLayout.createSequentialGroup()
-                        .addComponent(lblNumeroDoc3)
+                        .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(lblNumeroDoc3)
+                            .addComponent(lblNumeroDoc2))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jDateFechaNac, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addGroup(JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnCrearPersona)
                         .addComponent(btnActualizarPersona)
-                        .addComponent(btnBorrarPersona)))
+                        .addComponent(btnBorrarPersona))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, JPPersonasLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(JPPersonasLayout.createSequentialGroup()
+                            .addComponent(lblNumeroDoc4)
+                            .addGap(27, 27, 27))
+                        .addComponent(txtIdPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(46, 46, 46)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -889,9 +1103,25 @@ public class Main1 extends javax.swing.JFrame {
         });
         jScrollPane11.setViewportView(tblFuncionario);
 
-        jLabel3.setText("Persona");
+        jLabel3.setText("Personas");
 
-        jLabel4.setText("Grupo Familiar");
+        jLabel4.setText("ID Funcionario");
+
+        btnCrearFuncionario.setText("Crear");
+        btnCrearFuncionario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCrearFuncionarioActionPerformed(evt);
+            }
+        });
+
+        btnActualizarFuncionario.setText("Actualizar");
+
+        btnBorrarFuncionario.setText("Borrar");
+        btnBorrarFuncionario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarFuncionarioActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -899,34 +1129,51 @@ public class Main1 extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(32, 32, 32)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(lblTitulo)
                         .addGap(46, 46, 46)
-                        .addComponent(cbxTitulo, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(cbxTitulo, 0, 179, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(lblInstituciones)
                             .addComponent(lblNivelEst))
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(cbxNivelEst, javax.swing.GroupLayout.PREFERRED_SIZE, 179, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addGap(0, 0, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(cbxNivelEst, 0, 179, Short.MAX_VALUE)
                             .addComponent(cbxInstituciones, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(54, 54, 54)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jLabel4)
-                    .addComponent(jLabel3))
-                .addGap(18, 18, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(txtPersona, javax.swing.GroupLayout.DEFAULT_SIZE, 209, Short.MAX_VALUE)
-                    .addComponent(txtGrupoFamiliar))
-                .addGap(115, 115, 115))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(txtIdNivelEst, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdInst, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdTituloAcad, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(54, 54, 54)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel3))
+                        .addGap(18, 18, Short.MAX_VALUE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtIdFunc, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(cbxPersonas, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(txtIdPers, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(48, 48, 48))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(79, 79, 79)
+                        .addComponent(btnCrearFuncionario)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnActualizarFuncionario)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnBorrarFuncionario)
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 878, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(23, Short.MAX_VALUE))
+                .addContainerGap(24, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -935,20 +1182,28 @@ public class Main1 extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblNivelEst)
                     .addComponent(cbxNivelEst, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtPersona, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3))
+                    .addComponent(jLabel3)
+                    .addComponent(cbxPersonas, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdNivelEst, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdPers, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(lblInstituciones)
                     .addComponent(cbxInstituciones, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(txtGrupoFamiliar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel4))
+                    .addComponent(txtIdFunc, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel4)
+                    .addComponent(txtIdInst, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(29, 29, 29)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addComponent(cbxTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(cbxTitulo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnCrearFuncionario)
+                        .addComponent(txtIdTituloAcad, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(btnActualizarFuncionario)
+                        .addComponent(btnBorrarFuncionario))
                     .addComponent(lblTitulo))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 45, Short.MAX_VALUE)
-                .addComponent(jScrollPane11, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane11, javax.swing.GroupLayout.DEFAULT_SIZE, 391, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Funcionarios", jPanel1);
@@ -961,25 +1216,115 @@ public class Main1 extends javax.swing.JFrame {
 
         jLabel2.setText("ROL");
 
+        tblGrupoFamiliar.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+
+            }
+        ));
+        tblGrupoFamiliar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                tblGrupoFamiliarMousePressed(evt);
+            }
+        });
+        jScrollPane12.setViewportView(tblGrupoFamiliar);
+
+        jLabel5.setText("PERSONAS");
+
+        btnAddPerGrup.setText("Añadir ");
+        btnAddPerGrup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddPerGrupActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Actualizar");
+
+        jButton6.setText("Borrar");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("FUNCIONARIO");
+
+        jLabel7.setText("ID GRUPO FAMILIAR");
+
         javax.swing.GroupLayout JPGrupoFamiliarLayout = new javax.swing.GroupLayout(JPGrupoFamiliar);
         JPGrupoFamiliar.setLayout(JPGrupoFamiliarLayout);
         JPGrupoFamiliarLayout.setHorizontalGroup(
             JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
-                .addGap(28, 28, 28)
-                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel2)
-                    .addComponent(cbxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(797, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPGrupoFamiliarLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtIdRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(33, 33, 33)
+                        .addComponent(jLabel7)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addComponent(txtIdGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnAddPerGrup)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton5)
+                        .addGap(18, 18, 18)
+                        .addComponent(jButton6))
+                    .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbxPersonas1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtIdPers1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(132, 132, 132)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cbxFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtIdFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(55, 55, 55))
+            .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
+                    .addGap(22, 22, 22)
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 878, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(22, Short.MAX_VALUE)))
         );
         JPGrupoFamiliarLayout.setVerticalGroup(
             JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(cbxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(472, Short.MAX_VALUE))
+                .addGap(40, 40, 40)
+                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel5)
+                    .addComponent(cbxPersonas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdPers1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel6)
+                    .addComponent(cbxFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtIdFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(26, 26, 26)
+                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAddPerGrup)
+                        .addComponent(jButton5)
+                        .addComponent(jButton6))
+                    .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel7)
+                        .addComponent(txtIdGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jLabel2)
+                        .addComponent(cbxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtIdRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addContainerGap(456, Short.MAX_VALUE))
+            .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
+                    .addGap(144, 144, 144)
+                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addContainerGap(88, Short.MAX_VALUE)))
         );
 
         JPFuncionarios.addTab("Grupo Familiar", JPGrupoFamiliar);
@@ -1049,7 +1394,7 @@ public class Main1 extends javax.swing.JFrame {
                         .addComponent(txtSexo, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(32, 32, 32)
                 .addComponent(jScrollPane10, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(113, Short.MAX_VALUE))
+                .addContainerGap(114, Short.MAX_VALUE))
         );
         JPSexosLayout.setVerticalGroup(
             JPSexosLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1147,7 +1492,7 @@ public class Main1 extends javax.swing.JFrame {
                         .addComponent(lblNombreRol)
                         .addGap(18, 18, 18)
                         .addComponent(txtNombreRol, javax.swing.GroupLayout.PREFERRED_SIZE, 99, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 204, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 205, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 360, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(54, 54, 54))
         );
@@ -1168,7 +1513,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarRol)
                             .addComponent(btnBorrarRol)))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Roles", JPRoles);
@@ -1268,7 +1613,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarNivel)
                             .addComponent(btnBorrarNivel)))
                     .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Nivel Estudios", JPNivel);
@@ -1338,7 +1683,7 @@ public class Main1 extends javax.swing.JFrame {
                         .addComponent(btnCrearInstitucion)
                         .addGap(85, 85, 85)
                         .addComponent(btnEditarInstitucion)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 124, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 125, Short.MAX_VALUE)
                         .addComponent(btnBorrarInstitucion)
                         .addGap(46, 46, 46))
                     .addGroup(JPInstitucionLayout.createSequentialGroup()
@@ -1370,7 +1715,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarInstitucion)
                             .addComponent(btnBorrarInstitucion)))
                     .addComponent(jScrollPane7, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Institucion de Estudios", JPInstitucion);
@@ -1443,7 +1788,7 @@ public class Main1 extends javax.swing.JFrame {
                         .addComponent(lblNombreTitulo))
                     .addGroup(JPTituloLayout.createSequentialGroup()
                         .addComponent(btnCrearTitulo)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 167, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 168, Short.MAX_VALUE)
                         .addComponent(btnEditarTitulo)))
                 .addGap(26, 26, 26)
                 .addGroup(JPTituloLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -1474,7 +1819,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarTitulo)
                             .addComponent(btnBorrarTitulo)))
                     .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Titulo Academico", JPTitulo);
@@ -1548,7 +1893,7 @@ public class Main1 extends javax.swing.JFrame {
                         .addComponent(txtIdEstado, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(56, 56, 56)
                         .addComponent(lblEstado)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 114, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 115, Short.MAX_VALUE))
                     .addGroup(JPEstadoLayout.createSequentialGroup()
                         .addComponent(btnCrearEstado)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1582,7 +1927,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarEstado)
                             .addComponent(btnBorrarEstado)))
                     .addComponent(jScrollPane8, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Estado Civil", JPEstado);
@@ -1653,7 +1998,7 @@ public class Main1 extends javax.swing.JFrame {
                         .addComponent(txtIdDir, javax.swing.GroupLayout.PREFERRED_SIZE, 36, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(56, 56, 56)
                         .addComponent(lblDir)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 126, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 127, Short.MAX_VALUE))
                     .addGroup(JPDireccionLayout.createSequentialGroup()
                         .addComponent(btnCrearDir)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -1687,7 +2032,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarDir)
                             .addComponent(btnBorrarDir)))
                     .addComponent(jScrollPane9, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Direccion", JPDireccion);
@@ -1787,7 +2132,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarTelefono)
                             .addComponent(btnBorrarTelefono)))
                     .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Telefonos", JPTelefono);
@@ -1887,7 +2232,7 @@ public class Main1 extends javax.swing.JFrame {
                             .addComponent(btnEditarTipo)
                             .addComponent(btnBorrarTipo)))
                     .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(271, Short.MAX_VALUE))
+                .addContainerGap(276, Short.MAX_VALUE))
         );
 
         JPFuncionarios.addTab("Tipo Documento", JPTipo);
@@ -2431,11 +2776,7 @@ public class Main1 extends javax.swing.JFrame {
            txtSexo.requestFocus();
            return;
         }
-        if(txtNumDoc.getText().trim().length()==0){
-           JOptionPane.showMessageDialog(null, "Digite el Numero de documeto");
-           txtSexo.requestFocus();
-           return;
-        }
+        
         
         Persona per = new Persona();
         // per.setIdSexo(cbxSexos.getText().trim());
@@ -2451,23 +2792,121 @@ public class Main1 extends javax.swing.JFrame {
         }    }//GEN-LAST:event_btnCrearPersonaActionPerformed
 
     private void tblPersonaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPersonaMousePressed
-         int rowSelected = tblPersona.rowAtPoint(evt.getPoint());
-                
-        // cbxEstadoCiv
+        int rowSelected = tblPersona.rowAtPoint(evt.getPoint()); 
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String date = sdf.format(jDateFechaNac.getDate());
+        Sexo sex = new Sexo();
+        sex.setSexo(tblPersona.getValueAt(rowSelected, 6).toString());
+        System.out.println(sex.getSexo());
+        cbxSexos.getSelectedItem();
+        cbxSexos.setSelectedItem(sex.getSexo());
         // cbxDireccion.
         // cbxTelefonos.
-        // cbxTipoDoc        
+        // cbxTipoDoc
+        txtIdPersona.setText(tblPersona.getValueAt(rowSelected,0).toString());        
         txtNumDoc.setText(tblPersona.getValueAt(rowSelected, 1).toString());
         txtNombres.setText(tblPersona.getValueAt(rowSelected, 2).toString());
         txtApellidos.setText(tblPersona.getValueAt(rowSelected, 3).toString());
         
         
         
+        
     }//GEN-LAST:event_tblPersonaMousePressed
 
-    private void tblFuncionarioMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblFuncionarioMousePressed
-        // TODO add your handling code here:
+    private void tblFuncionarioMousePressed(java.awt.event.MouseEvent evt){//GEN-FIRST:event_tblFuncionarioMousePressed
+       int rowRolSelected = tblFuncionario.rowAtPoint(evt.getPoint());
+       int idFuncionario = 0; 
+       if(idFuncionario == 0){
+        idFuncionario = Integer.parseInt(tblFuncionario.getValueAt(rowRolSelected,0).toString());
+       }       
+        obtenerFuncionario(funcionarioController, idFuncionario);
     }//GEN-LAST:event_tblFuncionarioMousePressed
+
+    private void btnCrearFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearFuncionarioActionPerformed
+         
+        if(txtIdNivelEst.getText().trim().length()==0){
+           JOptionPane.showMessageDialog(null, "Seleccione el nivel de estudios");
+           txtIdNivelEst.requestFocus();
+           return;
+        }
+        if(txtIdInst.getText().trim().length()==0){
+           JOptionPane.showMessageDialog(null, "Seleccione la institucion educativa");
+           txtIdInst.requestFocus();
+           return;
+        }
+        if(txtIdTituloAcad.getText().trim().length()==0){
+           JOptionPane.showMessageDialog(null, "Seleccione el titulo academico");
+           txtIdTituloAcad.requestFocus();
+           return;
+        }
+        if(txtIdPers.getText().trim().length()==0){
+           JOptionPane.showMessageDialog(null, "Seleccione una persona ");
+           txtIdPers.requestFocus();
+           return;
+        }
+        
+        Funcionarios funcionario = new Funcionarios();
+        funcionario.setIdnivelEst(txtIdNivelEst.getText().trim());
+        funcionario.setIdInstEst(txtIdInst.getText().trim());
+        funcionario.setIdTituloAcad(txtIdTituloAcad.getText().trim());
+        funcionario.setIdPersona(txtIdPers.getText().trim());
+
+        
+        try{
+            funcionarioController.crearFuncionario(funcionario);
+            txtIdNivelEst.setText("");
+            txtIdInst.setText("");
+            txtIdTituloAcad.setText("");
+            txtIdPers.setText("");
+            listFuncionarios();
+            JOptionPane.showMessageDialog(null, "Funcionarios creado con exito");
+        }catch(SQLException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Funcionarios no pudo ser creado");
+        }
+        
+    }//GEN-LAST:event_btnCrearFuncionarioActionPerformed
+
+    private void tblGrupoFamiliarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGrupoFamiliarMousePressed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tblGrupoFamiliarMousePressed
+
+    private void btnAddPerGrupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPerGrupActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAddPerGrupActionPerformed
+
+    private void txtIdPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdPersonaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIdPersonaActionPerformed
+
+    private void btnBorrarFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarFuncionarioActionPerformed
+        if (txtIdFunc.getText().trim().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Seleccionar un funcionario de la lista");
+            txtIdFunc.requestFocus();
+            return;
+        }
+
+        int opt = JOptionPane.showConfirmDialog(null, "Está seguro de borrar el funcionario", "Confirmar salida", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opt == 0) {
+            try {
+            funcionarioController.eliminarFuncionario(Integer.parseInt(txtIdFunc.getText()));
+            txtIdNivelEst.setText("");
+            txtIdInst.setText("");
+            txtIdTituloAcad.setText("");
+            txtIdPers.setText("");
+                listFuncionarios();
+                JOptionPane.showMessageDialog(null, "Se eliminó carro correctamente");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "No se pudo Eliminar el funcionario");
+            }
+        }
+      
+    }//GEN-LAST:event_btnBorrarFuncionarioActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton6ActionPerformed
     
 
     public static void main(String args[]) {
@@ -2515,9 +2954,12 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JPanel JPTelefono;
     private javax.swing.JPanel JPTipo;
     private javax.swing.JPanel JPTitulo;
+    private javax.swing.JButton btnActualizarFuncionario;
     private javax.swing.JButton btnActualizarPersona;
+    private javax.swing.JButton btnAddPerGrup;
     private javax.swing.JButton btnBorrarDir;
     private javax.swing.JButton btnBorrarEstado;
+    private javax.swing.JButton btnBorrarFuncionario;
     private javax.swing.JButton btnBorrarInstitucion;
     private javax.swing.JButton btnBorrarNivel;
     private javax.swing.JButton btnBorrarPersona;
@@ -2528,6 +2970,7 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JButton btnBorrarTitulo;
     private javax.swing.JButton btnCrearDir;
     private javax.swing.JButton btnCrearEstado;
+    private javax.swing.JButton btnCrearFuncionario;
     private javax.swing.JButton btnCrearInstitucion;
     private javax.swing.JButton btnCrearNivel;
     private javax.swing.JButton btnCrearPersona;
@@ -2547,22 +2990,31 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JButton btnEditarTitulo;
     private javax.swing.JComboBox<Direccion> cbxDireccion;
     private javax.swing.JComboBox<EstadoCivil> cbxEstadoCiv;
+    private javax.swing.JComboBox<Funcionarios> cbxFuncionarios;
     private javax.swing.JComboBox<InstitucionEstudios> cbxInstituciones;
     private javax.swing.JComboBox<NivelEstudios> cbxNivelEst;
+    private javax.swing.JComboBox<Persona> cbxPersonas;
+    private javax.swing.JComboBox<Persona> cbxPersonas1;
     private javax.swing.JComboBox<Rol> cbxRoles;
     private javax.swing.JComboBox<Sexo> cbxSexos;
     private javax.swing.JComboBox<Telefono> cbxTelefonos;
     private javax.swing.JComboBox<TipoDocumento> cbxTipoDoc;
     private javax.swing.JComboBox<TituloAcademico> cbxTitulo;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
     private com.toedter.calendar.JDateChooser jDateFechaNac;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
+    private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
+    private javax.swing.JScrollPane jScrollPane12;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
@@ -2596,6 +3048,7 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JLabel lblNumeroDoc1;
     private javax.swing.JLabel lblNumeroDoc2;
     private javax.swing.JLabel lblNumeroDoc3;
+    private javax.swing.JLabel lblNumeroDoc4;
     private javax.swing.JLabel lblSexo;
     private javax.swing.JLabel lblTel;
     private javax.swing.JLabel lblTelefono;
@@ -2604,6 +3057,7 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JTable tblDir;
     private javax.swing.JTable tblEstados;
     private javax.swing.JTable tblFuncionario;
+    private javax.swing.JTable tblGrupoFamiliar;
     private javax.swing.JTable tblInstitucion;
     private javax.swing.JTable tblNivel;
     private javax.swing.JTable tblPersona;
@@ -2615,22 +3069,30 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JTextField txtApellidos;
     private javax.swing.JTextField txtDir;
     private javax.swing.JTextField txtEstado;
-    private javax.swing.JTextField txtGrupoFamiliar;
     private javax.swing.JTextField txtIdDir;
     private javax.swing.JTextField txtIdEstado;
+    private javax.swing.JTextField txtIdFunc;
+    private javax.swing.JTextField txtIdFuncionario;
+    private javax.swing.JTextField txtIdGrupo;
+    private javax.swing.JTextField txtIdInst;
     private javax.swing.JTextField txtIdInstitucion;
     private javax.swing.JTextField txtIdNivel;
+    private javax.swing.JTextField txtIdNivelEst;
+    private javax.swing.JTextField txtIdPers;
+    private javax.swing.JTextField txtIdPers1;
+    private javax.swing.JTextField txtIdPersona;
     private javax.swing.JTextField txtIdRol;
+    private javax.swing.JTextField txtIdRoles;
     private javax.swing.JTextField txtIdSexo;
     private javax.swing.JTextField txtIdTelefono;
     private javax.swing.JTextField txtIdTipo;
     private javax.swing.JTextField txtIdTitulo;
+    private javax.swing.JTextField txtIdTituloAcad;
     private javax.swing.JTextField txtInstitucion;
     private javax.swing.JTextField txtNivel;
     private javax.swing.JTextField txtNombreRol;
     private javax.swing.JTextField txtNombres;
     private javax.swing.JTextField txtNumDoc;
-    private javax.swing.JTextField txtPersona;
     private javax.swing.JTextField txtSexo;
     private javax.swing.JTextField txtTelefono;
     private javax.swing.JTextField txtTipo;

@@ -1,33 +1,33 @@
 package com.iudigital.dominio;
 
 public class GrupoFamiliar {
-    private int idGrupo;
-    private int idRol;
-    private int idPer;
-    private int idFuncionario;
+    private String idGrupo;
+    private String idRol;
+    private String idPer;
+    private String idFuncionario;
     
-    public int getIdGrupo() {
+    public String getIdGrupo() {
         return idGrupo;
     }
-    public void setIdGrupo(int idGrupo) {
+    public void setIdGrupo(String idGrupo) {
         this.idGrupo = idGrupo;
     }
-    public int getIdRol() {
+    public String getIdRol() {
         return idRol;
     }
-    public void setIdRol(int idRol) {
+    public void setIdRol(String idRol) {
         this.idRol = idRol;
     }
-    public int getIdPer() {
+    public String getIdPer() {
         return idPer;
     }
-    public void setIdPer(int idPer) {
+    public void setIdPer(String idPer) {
         this.idPer = idPer;
     }
-    public int getIdFuncionario() {
+    public String getIdFuncionario() {
         return idFuncionario;
     }
-    public void setIdFuncionario(int idFuncionario) {
+    public void setIdFuncionario(String idFuncionario) {
         this.idFuncionario = idFuncionario;
     }
 
