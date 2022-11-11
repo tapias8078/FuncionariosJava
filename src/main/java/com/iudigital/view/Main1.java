@@ -25,6 +25,7 @@ import com.iudigital.dominio.Sexo;
 import com.iudigital.dominio.Telefono;
 import com.iudigital.dominio.TipoDocumento;
 import com.iudigital.dominio.TituloAcademico;
+import java.sql.Date;
 
 import java.sql.SQLException;
 import java.text.SimpleDateFormat;
@@ -48,6 +49,8 @@ public class Main1 extends javax.swing.JFrame {
     private final TipoDocumentoController tipoDocumentoController;
     private final TituloAcademicoController tituloAcademicoController;
     
+    private String sex, estadoCivil, direccion,telefono,tipoDoc;
+    
 
 
     private final String[] COLUMNSROL = {"ID","ROL"};
@@ -61,6 +64,7 @@ public class Main1 extends javax.swing.JFrame {
     private final String[] COLUMNSTITULO= {"ID","TITULO ACADEMICO"};
     private final String[] COLUMNSPERSONA= {"ID","DOCUMENTO","TIPO DOCUMENTO","NOMBRES","APELLIDOS","FECHA NACIMIENTO","SEXO","ESTADO CIVIL","TELEFONO","DIRECCION"};
     private final String[] COLUMNSFUNCIONARIO= {"ID","NIVEL ESTUDIOS","INSTITUCION DE ESTUDIOS","TITULO","ID PERSONA","CEDULA","NOMBRES","APELLIDOS"};
+    private final String[] COLUMNSGRUPOFAMILIAR= {"ID","ROL","PERSONA","ID FUNCIONARIO"};
     private final String SELECCIONE = "-- SELECCIONE --";
     
     public Main1() {
@@ -81,6 +85,11 @@ public class Main1 extends javax.swing.JFrame {
         txtIdPers.setEditable(false);
         txtIdPersona.setEditable(false);
         txtIdFunc.setEditable(false);
+        sex = "";
+        estadoCivil="";
+        direccion="";
+        telefono="";
+        tipoDoc="";
         
         
                
@@ -111,6 +120,7 @@ public class Main1 extends javax.swing.JFrame {
         listTipoDoc();
         listPersonas();
         listFuncionarios();
+        listGrupoFamiliar();
         addListener();  
         
     }
@@ -160,6 +170,39 @@ public class Main1 extends javax.swing.JFrame {
                 row++;
 
                 cbxFuncionarios.addItem(funcionario);
+                
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+     private void listGrupoFamiliar() {        
+        
+               
+        tblGrupoFamiliar.removeAll();
+        
+        
+        DefaultTableModel defaultTableModel = new DefaultTableModel();
+        for (String COLUMN : COLUMNSGRUPOFAMILIAR) {
+            defaultTableModel.addColumn(COLUMN);
+        }
+
+        tblGrupoFamiliar.setModel(defaultTableModel);
+        try {
+            List<GrupoFamiliar> gruposFamiliares = grupoFamiliarController.obtnerGruposFamiliares();
+            if (gruposFamiliares.isEmpty()) {
+                return;
+            }
+            defaultTableModel.setRowCount(gruposFamiliares.size());
+            int row = 0;
+            for (GrupoFamiliar grupo : gruposFamiliares) {
+                
+                defaultTableModel.setValueAt(grupo.getIdGrupo(), row, 0);
+                defaultTableModel.setValueAt(grupo.getIdRol(), row, 1);
+                defaultTableModel.setValueAt(grupo.getIdPer(), row, 2);
+                defaultTableModel.setValueAt(grupo.getIdFuncionario(), row, 3);
+                
+                row++;
                 
             }
         } catch (SQLException ex) {
@@ -555,6 +598,25 @@ public class Main1 extends javax.swing.JFrame {
         }
     }
 
+    public void obtenerPersona(PersonaController personaController, int id) {
+
+        try {
+           Persona persona = personaController.obtenerPersona(id);
+           //String nivelEstudio = funcionario.getIdFunc().toString();
+           
+           txtNumDoc.setText(String.valueOf(persona.getNumDocPer()));
+           txtIdPersona.setText(String.valueOf(persona.getIdPersona()));
+           txtNombres.setText(String.valueOf(persona.getNombresPer()));
+           txtApellidos.setText(String.valueOf(persona.getApellidosPer()));
+           
+          
+
+            
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
     
     
 
@@ -579,15 +641,15 @@ public class Main1 extends javax.swing.JFrame {
         cbxSexos.addItemListener(event -> {
             Sexo selectedSexo = (Sexo) event.getItem();
             if (selectedSexo.getSexo().equals(SELECCIONE)) {
-                txtSexo.setText("");
+                this.sex="";
                 
 
             } else {
-                txtIdSexo.setText(String.valueOf(selectedSexo.getIdSexo()));
-                txtSexo.setText(selectedSexo.getSexo());
+                this.sex=String.valueOf(selectedSexo.getIdSexo());
+                
                 
             }
-            System.out.println("selectedSexo = " + selectedSexo);
+            System.out.println("selectedSexo = " + sex);
         });
         cbxPersonas1.addItemListener(event -> {
             Persona selectedPer = (Persona) event.getItem();            
@@ -670,6 +732,58 @@ public class Main1 extends javax.swing.JFrame {
             }
             System.out.println("selectedRol = " + selectedPersona);
         });
+        cbxEstadoCiv.addItemListener(event -> {
+            EstadoCivil selectedEstado = (EstadoCivil) event.getItem();            
+            if (selectedEstado.getEstado().equals(SELECCIONE)) {
+                this.estadoCivil="";
+                
+
+            } else {
+                this.estadoCivil=String.valueOf(selectedEstado.getIdEstado());
+                
+                
+            }
+            System.out.println("estado Civil = " + estadoCivil);
+        });
+        cbxDireccion.addItemListener(event -> {
+            Direccion selectedDireccion = (Direccion) event.getItem();            
+            if (selectedDireccion.getDireccion().equals(SELECCIONE)) {
+                this.direccion="";
+                
+
+            } else {
+                this.direccion=String.valueOf(selectedDireccion.getIdDireccion());
+                
+                
+            }
+            System.out.println("direccion = " + direccion);
+        });
+        cbxTelefonos.addItemListener(event -> {
+            Telefono selectedTelefono = (Telefono) event.getItem();            
+            if (selectedTelefono.getTelefono().equals(SELECCIONE)) {
+                this.telefono="";
+                
+
+            } else {
+                this.telefono=String.valueOf(selectedTelefono.getIdTelefono());
+                
+                
+            }
+            System.out.println("telefono = " + telefono);
+        });
+        cbxTipoDoc.addItemListener(event -> {
+            TipoDocumento selectedTipoDocumento = (TipoDocumento) event.getItem();            
+            if (selectedTipoDocumento.getTipoDoc().equals(SELECCIONE)) {
+                this.tipoDoc="";
+                
+
+            } else {
+                this.tipoDoc=String.valueOf(selectedTipoDocumento.getIdTipoDoc());
+                
+                
+            }
+            System.out.println("tipo documento = " + tipoDoc);
+        });
        
         
         
@@ -732,23 +846,23 @@ public class Main1 extends javax.swing.JFrame {
         txtIdPers = new javax.swing.JTextField();
         btnActualizarFuncionario = new javax.swing.JButton();
         btnBorrarFuncionario = new javax.swing.JButton();
-        JPGrupoFamiliar = new javax.swing.JPanel();
+        btnActualizarGrupo = new javax.swing.JPanel();
         cbxRoles = new javax.swing.JComboBox<>();
         jLabel2 = new javax.swing.JLabel();
-        jScrollPane12 = new javax.swing.JScrollPane();
-        tblGrupoFamiliar = new javax.swing.JTable();
         jLabel5 = new javax.swing.JLabel();
         cbxPersonas1 = new javax.swing.JComboBox<>();
         txtIdPers1 = new javax.swing.JTextField();
         btnAddPerGrup = new javax.swing.JButton();
         jButton5 = new javax.swing.JButton();
-        jButton6 = new javax.swing.JButton();
+        btnBorrarGrupo = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         cbxFuncionarios = new javax.swing.JComboBox<>();
         txtIdFuncionario = new javax.swing.JTextField();
         txtIdRoles = new javax.swing.JTextField();
         jLabel7 = new javax.swing.JLabel();
         txtIdGrupo = new javax.swing.JTextField();
+        jScrollPane13 = new javax.swing.JScrollPane();
+        tblGrupoFamiliar = new javax.swing.JTable();
         JPSexos = new javax.swing.JPanel();
         txtIdSexo = new javax.swing.JTextField();
         lblIdSexo = new javax.swing.JLabel();
@@ -916,7 +1030,7 @@ public class Main1 extends javax.swing.JFrame {
 
         lblNumeroDoc3.setText("FECHA DE NACIMIENTO");
 
-        jDateFechaNac.setDateFormatString("y MMM d");
+        jDateFechaNac.setDateFormatString("yyyy-MM-dd");
 
         tblPersona.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -941,8 +1055,18 @@ public class Main1 extends javax.swing.JFrame {
         });
 
         btnBorrarPersona.setText("Borrar");
+        btnBorrarPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarPersonaActionPerformed(evt);
+            }
+        });
 
         btnActualizarPersona.setText("Actualizar");
+        btnActualizarPersona.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarPersonaActionPerformed(evt);
+            }
+        });
 
         lblNumeroDoc4.setText("ID PERSONA");
 
@@ -1070,6 +1194,12 @@ public class Main1 extends javax.swing.JFrame {
 
         JPFuncionarios.addTab("Persona", JPPersonas);
 
+        cbxNivelEst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cbxNivelEstActionPerformed(evt);
+            }
+        });
+
         lblNivelEst.setText("Nivel de Estudios");
 
         lblInstituciones.setText("Institucion de Estudios");
@@ -1114,7 +1244,18 @@ public class Main1 extends javax.swing.JFrame {
             }
         });
 
+        txtIdNivelEst.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdNivelEstActionPerformed(evt);
+            }
+        });
+
         btnActualizarFuncionario.setText("Actualizar");
+        btnActualizarFuncionario.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnActualizarFuncionarioActionPerformed(evt);
+            }
+        });
 
         btnBorrarFuncionario.setText("Borrar");
         btnBorrarFuncionario.addActionListener(new java.awt.event.ActionListener() {
@@ -1216,6 +1357,34 @@ public class Main1 extends javax.swing.JFrame {
 
         jLabel2.setText("ROL");
 
+        jLabel5.setText("PERSONAS");
+
+        txtIdPers1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtIdPers1ActionPerformed(evt);
+            }
+        });
+
+        btnAddPerGrup.setText("Añadir");
+        btnAddPerGrup.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddPerGrupActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText("Actualizar");
+
+        btnBorrarGrupo.setText("Borrar");
+        btnBorrarGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnBorrarGrupoActionPerformed(evt);
+            }
+        });
+
+        jLabel6.setText("FUNCIONARIO");
+
+        jLabel7.setText("ID GRUPO FAMILIAR");
+
         tblGrupoFamiliar.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -1229,38 +1398,28 @@ public class Main1 extends javax.swing.JFrame {
                 tblGrupoFamiliarMousePressed(evt);
             }
         });
-        jScrollPane12.setViewportView(tblGrupoFamiliar);
+        jScrollPane13.setViewportView(tblGrupoFamiliar);
 
-        jLabel5.setText("PERSONAS");
-
-        btnAddPerGrup.setText("Añadir ");
-        btnAddPerGrup.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnAddPerGrupActionPerformed(evt);
-            }
-        });
-
-        jButton5.setText("Actualizar");
-
-        jButton6.setText("Borrar");
-        jButton6.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton6ActionPerformed(evt);
-            }
-        });
-
-        jLabel6.setText("FUNCIONARIO");
-
-        jLabel7.setText("ID GRUPO FAMILIAR");
-
-        javax.swing.GroupLayout JPGrupoFamiliarLayout = new javax.swing.GroupLayout(JPGrupoFamiliar);
-        JPGrupoFamiliar.setLayout(JPGrupoFamiliarLayout);
-        JPGrupoFamiliarLayout.setHorizontalGroup(
-            JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, JPGrupoFamiliarLayout.createSequentialGroup()
+        javax.swing.GroupLayout btnActualizarGrupoLayout = new javax.swing.GroupLayout(btnActualizarGrupo);
+        btnActualizarGrupo.setLayout(btnActualizarGrupoLayout);
+        btnActualizarGrupoLayout.setHorizontalGroup(
+            btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, btnActualizarGrupoLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                    .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
+                .addGroup(btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(btnActualizarGrupoLayout.createSequentialGroup()
+                        .addComponent(jLabel5)
+                        .addGap(18, 18, 18)
+                        .addComponent(cbxPersonas1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtIdPers1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(132, 132, 132)
+                        .addComponent(jLabel6)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, 14, Short.MAX_VALUE)
+                        .addComponent(cbxFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtIdFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, btnActualizarGrupoLayout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addGap(18, 18, 18)
                         .addComponent(cbxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1275,31 +1434,15 @@ public class Main1 extends javax.swing.JFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jButton5)
                         .addGap(18, 18, 18)
-                        .addComponent(jButton6))
-                    .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
-                        .addComponent(jLabel5)
-                        .addGap(18, 18, 18)
-                        .addComponent(cbxPersonas1, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtIdPers1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(132, 132, 132)
-                        .addComponent(jLabel6)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(cbxFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtIdFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(btnBorrarGrupo))
+                    .addComponent(jScrollPane13))
                 .addGap(55, 55, 55))
-            .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
-                    .addGap(22, 22, 22)
-                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 878, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(22, Short.MAX_VALUE)))
         );
-        JPGrupoFamiliarLayout.setVerticalGroup(
-            JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
+        btnActualizarGrupoLayout.setVerticalGroup(
+            btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(btnActualizarGrupoLayout.createSequentialGroup()
                 .addGap(40, 40, 40)
-                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
                     .addComponent(cbxPersonas1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtIdPers1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -1307,27 +1450,24 @@ public class Main1 extends javax.swing.JFrame {
                     .addComponent(cbxFuncionarios, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(txtIdFuncionario, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(26, 26, 26)
-                .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(btnAddPerGrup)
                         .addComponent(jButton5)
-                        .addComponent(jButton6))
-                    .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnBorrarGrupo))
+                    .addGroup(btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel7)
                         .addComponent(txtIdGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addGroup(btnActualizarGrupoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                         .addComponent(jLabel2)
                         .addComponent(cbxRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addComponent(txtIdRoles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(456, Short.MAX_VALUE))
-            .addGroup(JPGrupoFamiliarLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                .addGroup(JPGrupoFamiliarLayout.createSequentialGroup()
-                    .addGap(144, 144, 144)
-                    .addComponent(jScrollPane12, javax.swing.GroupLayout.PREFERRED_SIZE, 335, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addContainerGap(88, Short.MAX_VALUE)))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                .addComponent(jScrollPane13, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22))
         );
 
-        JPFuncionarios.addTab("Grupo Familiar", JPGrupoFamiliar);
+        JPFuncionarios.addTab("Grupo Familiar", btnActualizarGrupo);
 
         txtIdSexo.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -1346,6 +1486,11 @@ public class Main1 extends javax.swing.JFrame {
         lblNombreSexo.setText("SEXO");
 
         btnEditarSexo.setText("Editar");
+        btnEditarSexo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnEditarSexoActionPerformed(evt);
+            }
+        });
 
         btnCrearSexo.setText("Crear");
         btnCrearSexo.addActionListener(new java.awt.event.ActionListener() {
@@ -2776,48 +2921,65 @@ public class Main1 extends javax.swing.JFrame {
            txtSexo.requestFocus();
            return;
         }
+        if(jDateFechaNac.getDateFormatString().trim().length()==0){
+           JOptionPane.showMessageDialog(null, "Ingrese una Fecha");
+           jDateFechaNac.requestFocus();
+           return;
+        }
+        
         
         
         Persona per = new Persona();
-        // per.setIdSexo(cbxSexos.getText().trim());
+        per.setIdSexo(sex);
+        per.setIdEstCiv(estadoCivil);
+        per.setIdDireccion(direccion);
+        per.setIdTelefono(telefono);
+        per.setIdtipoDoc(tipoDoc);
+        per.setNumDocPer(txtNumDoc.getText().trim());
+        per.setNombresPer(txtNombres.getText().trim());
+        per.setApellidosPer(txtApellidos.getText().trim());
+        per.setFechaNacPer(date);
+        
+               
+      
+        /*
+        funcionario.setIdnivelEst(txtIdNivelEst.getText().trim());
+        funcionario.setIdInstEst(txtIdInst.getText().trim());
+        funcionario.setIdTituloAcad(txtIdTituloAcad.getText().trim());
+        funcionario.setIdPersona(txtIdPers.getText().trim());*/
         
         try{
             personaController.crearPersona(per);
-            txtSexo.setText("");
+            txtNumDoc.setText("");
+            txtNombres.setText("");
+            txtApellidos.setText("");
+            jDateFechaNac.setDateFormatString("");           
             listPersonas();
-            JOptionPane.showMessageDialog(null, "Sexo creado con exito");
+            JOptionPane.showMessageDialog(null, "Persona creado con exito");
         }catch(SQLException ex){
             ex.printStackTrace();
-            JOptionPane.showMessageDialog(null, "Sexo no pudo ser creado");
+            JOptionPane.showMessageDialog(null, "Persona no pudo ser creada");
         }    }//GEN-LAST:event_btnCrearPersonaActionPerformed
 
     private void tblPersonaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblPersonaMousePressed
-        int rowSelected = tblPersona.rowAtPoint(evt.getPoint()); 
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String date = sdf.format(jDateFechaNac.getDate());
-        Sexo sex = new Sexo();
-        sex.setSexo(tblPersona.getValueAt(rowSelected, 6).toString());
-        System.out.println(sex.getSexo());
-        cbxSexos.getSelectedItem();
-        cbxSexos.setSelectedItem(sex.getSexo());
-        // cbxDireccion.
-        // cbxTelefonos.
-        // cbxTipoDoc
-        txtIdPersona.setText(tblPersona.getValueAt(rowSelected,0).toString());        
-        txtNumDoc.setText(tblPersona.getValueAt(rowSelected, 1).toString());
-        txtNombres.setText(tblPersona.getValueAt(rowSelected, 2).toString());
-        txtApellidos.setText(tblPersona.getValueAt(rowSelected, 3).toString());
+       int rowSelected = tblPersona.rowAtPoint(evt.getPoint());
+       int idPersona = 0; 
+       if(idPersona == 0){
+        idPersona = Integer.parseInt(tblPersona.getValueAt(rowSelected,0).toString());
+       }       
+        obtenerPersona(personaController, idPersona);
         
+              
         
         
         
     }//GEN-LAST:event_tblPersonaMousePressed
 
     private void tblFuncionarioMousePressed(java.awt.event.MouseEvent evt){//GEN-FIRST:event_tblFuncionarioMousePressed
-       int rowRolSelected = tblFuncionario.rowAtPoint(evt.getPoint());
+       int rowSelected = tblFuncionario.rowAtPoint(evt.getPoint());
        int idFuncionario = 0; 
        if(idFuncionario == 0){
-        idFuncionario = Integer.parseInt(tblFuncionario.getValueAt(rowRolSelected,0).toString());
+        idFuncionario = Integer.parseInt(tblFuncionario.getValueAt(rowSelected,0).toString());
        }       
         obtenerFuncionario(funcionarioController, idFuncionario);
     }//GEN-LAST:event_tblFuncionarioMousePressed
@@ -2867,12 +3029,26 @@ public class Main1 extends javax.swing.JFrame {
         
     }//GEN-LAST:event_btnCrearFuncionarioActionPerformed
 
-    private void tblGrupoFamiliarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGrupoFamiliarMousePressed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_tblGrupoFamiliarMousePressed
-
     private void btnAddPerGrupActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPerGrupActionPerformed
-        // TODO add your handling code here:
+        GrupoFamiliar grupoFamiliar = new GrupoFamiliar();
+        grupoFamiliar.setIdRol(txtIdRoles.getText().trim());
+        grupoFamiliar.setIdPer(txtIdPers1.getText().trim());
+        grupoFamiliar.setIdFuncionario(txtIdFuncionario.getText().trim());
+        
+
+        
+        try{
+            grupoFamiliarController.crearGrupoFamiliar(grupoFamiliar);
+            txtIdPers1.setText("");
+            txtIdFuncionario.setText("");
+            txtIdRoles.setText("");
+            
+            listGrupoFamiliar();
+            JOptionPane.showMessageDialog(null, "persona agregada al grupo familiar con exito");
+        }catch(SQLException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "no pudo ser agregado");
+        }
     }//GEN-LAST:event_btnAddPerGrupActionPerformed
 
     private void txtIdPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdPersonaActionPerformed
@@ -2904,9 +3080,111 @@ public class Main1 extends javax.swing.JFrame {
       
     }//GEN-LAST:event_btnBorrarFuncionarioActionPerformed
 
-    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+    private void btnBorrarGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarGrupoActionPerformed
+        if (txtIdGrupo.getText().trim().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Seleccionar una persona de la lista");
+            txtIdGrupo.requestFocus();
+            return;
+        }
+
+        int opt = JOptionPane.showConfirmDialog(null, "Está seguro de borrar el funcionario", "Confirmar salida", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opt == 0) {
+            try {
+            grupoFamiliarController.eliminarGrupoFamiliar(Integer.parseInt(txtIdGrupo.getText()));
+            txtIdPers1.setText("");
+            txtIdFuncionario.setText("");
+            txtIdRoles.setText("");
+                listGrupoFamiliar();
+                JOptionPane.showMessageDialog(null, "Se eliminó persona correctamente");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "No se pudo Eliminar el persona");
+            }
+        }
+    }//GEN-LAST:event_btnBorrarGrupoActionPerformed
+
+    private void txtIdNivelEstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdNivelEstActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jButton6ActionPerformed
+    }//GEN-LAST:event_txtIdNivelEstActionPerformed
+
+    private void cbxNivelEstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cbxNivelEstActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cbxNivelEstActionPerformed
+
+    private void txtIdPers1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtIdPers1ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtIdPers1ActionPerformed
+
+    private void btnEditarSexoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEditarSexoActionPerformed
+         // TODO add your handling code here:
+    }//GEN-LAST:event_btnEditarSexoActionPerformed
+
+    private void tblGrupoFamiliarMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tblGrupoFamiliarMousePressed
+       int rowSelected = tblGrupoFamiliar.rowAtPoint(evt.getPoint());       
+        
+        txtIdGrupo.setText(tblGrupoFamiliar.getValueAt(rowSelected, 0).toString());
+        txtIdRoles.setText(tblGrupoFamiliar.getValueAt(rowSelected, 1).toString());
+        txtIdPers1.setText(tblGrupoFamiliar.getValueAt(rowSelected, 2).toString());
+        txtIdFuncionario.setText(tblGrupoFamiliar.getValueAt(rowSelected, 3).toString());
+        
+    }//GEN-LAST:event_tblGrupoFamiliarMousePressed
+
+    private void btnActualizarFuncionarioActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarFuncionarioActionPerformed
+        Funcionarios funcionario = new Funcionarios();
+        funcionario.setIdnivelEst(txtIdNivelEst.getText().trim());
+        funcionario.setIdInstEst(txtIdInst.getText().trim());
+        funcionario.setIdTituloAcad(txtIdTituloAcad.getText().trim());
+        funcionario.setIdPersona(txtIdPers.getText().trim());
+        
+
+        int opt = JOptionPane.showConfirmDialog(null, "Desea actualizar el funcionario", "Confirmar salida",
+                JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opt == 0) {
+
+            try { // en este metodo actualizar hacemos el casteo de string a integer, recibe dos parametros el id y el funcionario
+                funcionarioController.actualizarFuncionario(Integer.parseInt(txtIdFunc.getText()), funcionario);
+                txtIdNivelEst.setText("");
+                txtIdInst.setText("");
+                txtIdTituloAcad.setText("");
+                txtIdPers.setText("");                
+                listFuncionarios();
+                //mandamos el mensaje con joption pane, null porque esa opcion viene por defecto
+                //busca la clase padre
+                JOptionPane.showMessageDialog(null, "Se ha Actualizado el funcionario con éxito");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "No fué posible actualizar el funcionario");
+            }
+        }
+    }//GEN-LAST:event_btnActualizarFuncionarioActionPerformed
+
+    private void btnActualizarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnActualizarPersonaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnActualizarPersonaActionPerformed
+
+    private void btnBorrarPersonaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBorrarPersonaActionPerformed
+         if (txtIdPersona.getText().trim().length() == 0) {
+            JOptionPane.showMessageDialog(null, "Seleccionar una persona de la lista");
+            txtIdPersona.requestFocus();
+            return;
+        }
+
+        int opt = JOptionPane.showConfirmDialog(null, "Está seguro de borrar esta persona", "Confirmar salida", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE);
+        if (opt == 0) {
+            try {
+            personaController.eliminarPersona(Integer.parseInt(txtIdPersona.getText()));
+            txtNumDoc.setText("");
+            txtNombres.setText("");
+            txtApellidos.setText("");
+            jDateFechaNac.setDateFormatString(""); 
+                listPersonas();
+                JOptionPane.showMessageDialog(null, "Se eliminó carro correctamente");
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "No se pudo Eliminar el funcionario");
+            }
+        }
+    }//GEN-LAST:event_btnBorrarPersonaActionPerformed
     
 
     public static void main(String args[]) {
@@ -2945,7 +3223,6 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JPanel JPDireccion;
     private javax.swing.JPanel JPEstado;
     private javax.swing.JTabbedPane JPFuncionarios;
-    private javax.swing.JPanel JPGrupoFamiliar;
     private javax.swing.JPanel JPInstitucion;
     private javax.swing.JPanel JPNivel;
     private javax.swing.JPanel JPPersonas;
@@ -2955,11 +3232,13 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JPanel JPTipo;
     private javax.swing.JPanel JPTitulo;
     private javax.swing.JButton btnActualizarFuncionario;
+    private javax.swing.JPanel btnActualizarGrupo;
     private javax.swing.JButton btnActualizarPersona;
     private javax.swing.JButton btnAddPerGrup;
     private javax.swing.JButton btnBorrarDir;
     private javax.swing.JButton btnBorrarEstado;
     private javax.swing.JButton btnBorrarFuncionario;
+    private javax.swing.JButton btnBorrarGrupo;
     private javax.swing.JButton btnBorrarInstitucion;
     private javax.swing.JButton btnBorrarNivel;
     private javax.swing.JButton btnBorrarPersona;
@@ -3001,7 +3280,6 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JComboBox<TipoDocumento> cbxTipoDoc;
     private javax.swing.JComboBox<TituloAcademico> cbxTitulo;
     private javax.swing.JButton jButton5;
-    private javax.swing.JButton jButton6;
     private com.toedter.calendar.JDateChooser jDateFechaNac;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
@@ -3014,7 +3292,7 @@ public class Main1 extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane10;
     private javax.swing.JScrollPane jScrollPane11;
-    private javax.swing.JScrollPane jScrollPane12;
+    private javax.swing.JScrollPane jScrollPane13;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;

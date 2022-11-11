@@ -14,10 +14,10 @@ public class PersonaDao {
 
     private static final String GET_PERSONAS = "select personas.id_pers as ID,personas.numero_doc as Num_Doc, personas.nombres_pers as Nombres, personas.apellidos_pers as Apellidos, personas.fechanac_pers as fecha_nacimiento, sexo.sexo as sexo, tipodocumento.tipo_doc as tipo_doc, estadocivil.estado_civil as estado_civil, telefono.telefono as telefono, direccion.direccion as direccion from personas inner join sexo on sexo.id_sexo=personas.Sexo_id_sexo inner join tipodocumento on tipodocumento.id_tipo_doc = personas.TipoDocumento_id_tipo_doc inner join estadocivil on estadocivil.id_est_civil = personas.EstadoCivil_id_est_civil inner join telefono on telefono.id_telefono = personas.Telefono_id_telefono inner join direccion on direccion.id_direccion = personas.Direccion_id_direccion;";
 
-    private static final String CREATE_PERSONA = "insert into persona (numero_doc,nombres_pers,apellidos_pers,fechanac_pers,Sexo_id_sexo,TipoDocumento_id_tipo_doc,EstadoCivil_id_est_civil,Telefono_id_telefono,Direccion_id_direccion) values (?,?,?,?,?,?,?,?,?)";
-    private static final String GET_PERSONA_BY_ID = "select * from persona where id_pers = ?";
+    private static final String CREATE_PERSONA = "insert into personas (numero_doc,nombres_pers,apellidos_pers,fechanac_pers,Sexo_id_sexo,TipoDocumento_id_tipo_doc,EstadoCivil_id_est_civil,Telefono_id_telefono,Direccion_id_direccion) values (?,?,?,?,?,?,?,?,?)";
+    private static final String GET_PERSONA_BY_ID = "select * from personas where id_pers = ?";
     private static final String UPDATE_PERSONA = "update personas set numero_doc = ?, nombres_pers = ?, apellidos_pers = ?, fechanac_pers = ?, Sexo_id_sexo = ?, TipoDocumento_id_tipo_doc = ?, EstadoCivil_id_est_civil = ?, Telefono_id_telefono = ?, Direccion_id_direccion = ? WHERE id_pers = ?";
-    private static final String DELETE_PERSONA = "delete from persona  where id_pers=?";
+    private static final String DELETE_PERSONA = "delete from personas  where id_pers=?";
 
     public void crearPersona(Persona persona) throws SQLException {
         Connection connection = null;

@@ -15,7 +15,7 @@ public class FuncionariosDao {
     private static final String GET_FUNCIONARIOS = "select funcionarios.id_func as id, nivelestudios.nivel_est as nivel_est,institucionestudios.nombre_inst as Institucion , tituloacademico.nombre_titulo as nombre_titulo, personas.id_pers, personas.numero_doc,personas.nombres_pers, personas.apellidos_pers from funcionarios inner join nivelestudios on nivelestudios.id_niv_est = funcionarios.NivelEstudios_id_niv_est inner join institucionestudios on institucionestudios.id_institucion = funcionarios.InstitucionEstudios_id_institucion inner join tituloacademico on tituloacademico.id_titulo = funcionarios.TituloAcademico_id_titulo inner join personas on personas.id_pers = funcionarios.Personas_id_pers";
     private static final String CREATE_FUNCIONARIO = "insert into funcionarios (NivelEstudios_id_niv_est,InstitucionEstudios_id_institucion,TituloAcademico_id_titulo,Personas_id_pers) values (?,?,?,?)";
     private static final String GET_FUNCIONARIO_BY_ID = "select * from funcionarios where id_func = ?";
-    private static final String UPDATE_FUNCIONARIO = "update funcionarios set NivelEstudios_id_niv_est = ? InstitucionEstudios_id_institucion = ? TituloAcademico_id_titulo = ? Peronas_id_pers = ? where id_func= ?";
+    private static final String UPDATE_FUNCIONARIO = "update funcionarios set NivelEstudios_id_niv_est = ?, InstitucionEstudios_id_institucion = ?, TituloAcademico_id_titulo = ?, Personas_id_pers = ? where id_func= ?";
     private static final String DELETE_FUNCIONARIO = "delete from funcionarios  where id_func=?";
     
     public void crearFuncionario(Funcionarios funcionario) throws SQLException {
@@ -125,11 +125,11 @@ public class FuncionariosDao {
         try {
             connection = ConnectionUtil.getConnection();
             preparedStatement = connection.prepareCall(UPDATE_FUNCIONARIO);
-            preparedStatement.setString(0,funcionario.getIdnivelEst());
-            preparedStatement.setString(1,funcionario.getIdInstEst());
-            preparedStatement.setString(2,funcionario.getIdTituloAcad());
-            preparedStatement.setString(3,funcionario.getIdPersona());            
-            preparedStatement.setInt(4, idFunc);
+            preparedStatement.setString(1,funcionario.getIdnivelEst());
+            preparedStatement.setString(2,funcionario.getIdInstEst());
+            preparedStatement.setString(3,funcionario.getIdTituloAcad());
+            preparedStatement.setString(4,funcionario.getIdPersona());            
+            preparedStatement.setInt(5, idFunc);
             preparedStatement.executeUpdate();
 
         } finally {

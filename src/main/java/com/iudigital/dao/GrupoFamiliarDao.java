@@ -12,9 +12,9 @@ import com.iudigital.util.ConnectionUtil;
 
 public class GrupoFamiliarDao {
 
-    private static final String GET_GRUPOSFAMILIARES = "";
-    private static final String CREATE_GRUPOFAMILIAR = "SELECT grupofamiliar.id_grup as id, rol.nombre_rol as rol, personas.numero_doc as persona_doc, funcionarios.id_func as funcionario_id from grupofamiliar inner join rol on rol.idRol = grupofamiliar.Rol_idRol inner join personas on personas.id_pers = grupofamiliar.Personas_id_pers inner join funcionarios on funcionarios.id_func = grupofamiliar.Funcionarios_id_func;";
-    private static final String GET_GRUPOFAMILIAR_BY_ID = "select * from grupoFamiliar where id_grup = ?";
+    private static final String GET_GRUPOSFAMILIARES = "SELECT grupofamiliar.id_grup as id, rol.nombre_rol as rol, personas.numero_doc as persona_doc, funcionarios.id_func from grupofamiliar inner join rol on rol.idRol = grupofamiliar.Rol_idRol inner join personas on personas.id_pers = grupofamiliar.Personas_id_pers inner join funcionarios on funcionarios.id_func = grupofamiliar.Funcionarios_id_func";
+    private static final String CREATE_GRUPOFAMILIAR = "insert into grupofamiliar (Rol_idRol,personas_id_pers,funcionarios_id_func) values (?,?,?)";
+    private static final String GET_GRUPOFAMILIAR_BY_ID = "select * from grupoFamiliar where Funcionarios_id_func = ?";
     private static final String UPDATE_GRUPOFAMILIAR = "update grupoFamiliar set Rol_idRol = ? Personas_id_pers = ? Funcionarios_id_func = ? Peronas_id_pers = ? where id_grup = ?";
     private static final String DELETE_GRUPOFAMILIAR = "delete from grupoFamiliar  where id_grup=?";
     
@@ -60,7 +60,7 @@ public class GrupoFamiliarDao {
                 grupoFamiliar.setIdGrupo(resultSet.getString("id"));
                 grupoFamiliar.setIdRol(resultSet.getString("rol"));
                 grupoFamiliar.setIdPer(resultSet.getString("persona_doc"));
-                grupoFamiliar.setIdFuncionario(resultSet.getString("funcionario_id"));           
+                grupoFamiliar.setIdFuncionario(resultSet.getString("id_func"));           
                
                
                
@@ -96,10 +96,10 @@ public class GrupoFamiliarDao {
             if (resultSet.next()) {
                grupoFamiliar = new GrupoFamiliar();
 
-               grupoFamiliar.setIdGrupo(resultSet.getString("id_grupo"));
-                grupoFamiliar.setIdRol(resultSet.getString("Rol_idRol"));
-                grupoFamiliar.setIdPer(resultSet.getString("Personas_id_pers"));
-                grupoFamiliar.setIdFuncionario(resultSet.getString("Funcionarios_id_func"));                  
+               grupoFamiliar.setIdGrupo(resultSet.getString("id"));
+                grupoFamiliar.setIdRol(resultSet.getString("rol"));
+                grupoFamiliar.setIdPer(resultSet.getString("persona_doc"));
+                grupoFamiliar.setIdFuncionario(resultSet.getString("id_func"));                  
             }
             return grupoFamiliar;
         } finally {
